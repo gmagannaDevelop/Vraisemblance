@@ -1,3 +1,28 @@
+
+# macOS
+.DS_Store
+
+# intermediary reports
+src/*.pdf
+src/*.tex
+src/*.log
+src/*.html
+
+# data 
+data
+
+# vim
+.*.swp
+
+# renv directory :
+renv
+
+# sujets des tps :
+sujets
+*sujet.pdf
+
+################################################
+
 # History files
 .Rhistory
 .Rapp.history
