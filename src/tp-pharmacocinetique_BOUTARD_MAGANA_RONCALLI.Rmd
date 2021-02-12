@@ -1,0 +1,21 @@
+---
+title: "Modèle non-linéaire de pharmacocinétique"
+author: "BOUTARD Anthony, MAGANA LOPEZ Gustavo, RONCALLI Théo"
+date: "12/02/2021"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    toc: yes
+    toc_depth: 3
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+here::i_am("src/tp-pharmacocinetique_BOUTARD_MAGANA_RONCALLI.Rmd")
+library(here)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+debut
