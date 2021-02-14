@@ -18,4 +18,115 @@ library(here)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r lecture.donnees}
+library(docstring)
+library(tidyverse)
+
+fichier <- here("data", "PK.tsv")
+data <- read_delim(fichier, delim = " ")
+head(data)
+
+sujet11 <- data %>% filter(sujet == 11) %>% select(temps, concentration, dose)
+head(sujet11)
+```
+```{r modele}
+
+fonc.regr.dose <- function(D){
+  #' Fixer la dose initiale 
+  #' 
+  #' @description Créer une fonction pour un modèle 
+  #' d'absorption-élimination à 1 compartiment, en 
+  #' fixant la dose initiale.
+  #' 
+  #' \deqn{Y_{i} = \frac{D}{V}\frac{k_a}{k_a - k_e}
+  #' (e^{-k_e t_i} - e^{-k_a t_i}) + \varepsilon _i}
+  #' Ce modèle est déterminé par quatre paramètres
+  #'   D, V, ka, ke
+  #' et la covariable explicative, le temps t.
+  #' 
+  #' Étant donné que la dose initiale D est connue,
+  #' les paramètres sont réduits à :
+  #'   V, ka, ke
+  #'
+  #' @param D réel. La dose initiale.
+  #'
+  #' @usage fonc.regr.dose(dose)
+  #'
+  #' @return Une fonction `concentration(t, V, ka, ke)`
+  #'
+  #' @note Le premier argument de la fonction "concentration"
+  #' est la covariable `t` 
+  #'
+  
+  concentration <- function(t, V, ka, ke){
+    #stopifnot("ka == ke leads to zero-division"= ka != ke)
+    (D/V) * (ka/(ka - ke)) * (exp(-ke * t) - exp(-ka * t))
+  }
+   
+  return(concentration)
+}
+
+wow <- data %>% group_by(sujet) %>% select(dose) %>% summarise( dose = unique(dose)) 
+```
+
+$$
+y'(82) \approx \frac{Y(120) - Y(36)}{120 - 36}
+$$
+
+
+```{r adjust}
+f.sujet11 <- fonc.regr.dose(unique(sujet11$dose))
+
+v_i <- sujet11 %>%
+   mutate(V = dose / concentration) %>% select(V) %>% min()
+
+closest.to.mean <- function(df, group_var) {
+  group_var <- enquo(group_var)
+
+  df %>%
+    filter(
+      abs(!!group_var - mean(!!group_var)) == 
+      min(abs(!!group_var - mean(!!group_var)))
+    )
+}
+
+closest.to.median <- function(df, group_var) {
+  group_var <- enquo(group_var)
+
+  df %>%
+    filter(
+      abs(!!group_var - median(!!group_var)) == 
+      min(abs(!!group_var - median(!!group_var)))
+    )
+}
+
+t.half_life <- sujet11 %>% closest.to.median(concentration) %>% select(temps) %>% as.numeric() 
+ke_i <- -log(0.5) / t.half_life
+t.optim <- sujet11 %>% filter(concentration == max(concentration)) %>% select(temps) %>% as.numeric()
+#ka_i <- 11 * ke_i
+ka_i <- (7.6 * v_i ) / unique(sujet11$dose)
+
+y.sujet11 <- nls(
+  concentration ~ f.sujet11(temps, V, ka, ke), 
+  data = sujet11, start = list(V=v_i, ka=ka_i, ke=ke_i),
+  trace = TRUE, model = TRUE
+)
+
+plt1.sj11 <- sujet11 %>%
+  ggplot(mapping = aes(x = temps, y = concentration)) +
+    geom_point() +
+      geom_function(fun = f.sujet11, args = as.list(coef(y.sujet11)))
+
+print(plt1.sj11)
+```
+
+
+
 debut
+
+```{r extra}
+data %>% 
+  ggplot(aes(x=temps, y=concentration)) +
+    geom_point(aes(size=poids, shape=as.character(sexe), colour=dose))
+```
+

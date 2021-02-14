@@ -14,8 +14,6 @@ data
 # vim
 .*.swp
 
-# renv directory :
-renv
 
 # sujets des tps :
 sujets
