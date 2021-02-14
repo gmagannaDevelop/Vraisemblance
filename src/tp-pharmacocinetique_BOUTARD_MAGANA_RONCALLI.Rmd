@@ -102,10 +102,10 @@ closest.to.median <- function(df, group_var) {
 }
 
 t.half_life <- sujet11 %>% closest.to.median(concentration) %>% select(temps) %>% as.numeric() 
-ke_i <- -log(0.5) / t.half_life
+ke_i <- log(2.0) / t.half_life
 t.optim <- sujet11 %>% filter(concentration == max(concentration)) %>% select(temps) %>% as.numeric()
-#ka_i <- 11 * ke_i
-ka_i <- (7.6 * v_i ) / unique(sujet11$dose)
+dydt_0 <- (sujet11$concentration[1] - 0) / (sujet11$temps[1] - 0)
+ka_i <- (dydt_0 * v_i ) / unique(sujet11$dose)
 
 theta0 <- list(V=v_i, ka=ka_i, ke=ke_i)
 
@@ -114,6 +114,8 @@ y.sujet11 <- nls(
   data = sujet11, start = theta0,
   trace = TRUE, model = TRUE
 )
+
+s.y.sujet11 <- summary(y.sujet11)
 
 plt1.sj11 <- sujet11 %>%
   mutate(
@@ -124,19 +126,56 @@ plt1.sj11 <- sujet11 %>%
     geom_point() +
     geom_function(aes(colour = "nls"), 
                   fun = f.sujet11, args = as.list(coef(y.sujet11))) +
-    geom_label(
-      x = 50, y = 10,
-      label=TeX("$\\hat{y}_{i}(t_{i} \\; | \\; \\theta^{(0)})$")) +
-    geom_function(aes(colour = "depart"), 
+    geom_function(aes(colour = "Valeurs Initiales"), 
                   fun = f.sujet11, args = theta0) +
-    ggtitle(label = TeX("$\\hat{y}_{i}(t_{i} \\; | \\; \\theta^{(0)})$"))
+   ggtitle(label = "Estimation de la concentration du médicament dans le plasma sanguin")
 
 print(plt1.sj11)
 ```
 
 
+```{r more.less}
+less.more <-  function(a, b){
+  c(a - b, a + b)
+}
+
+more.less <-  function(a, b){
+  c(a + b, a - b)
+}
+```
 
 debut
+
+```{r conf.int}
+sujet11.var <- vcov(y.sujet11)
+
+IC_V <- c(coef(y.sujet11)[1] - qnorm(0.975) * sqrt(sujet11.var[1,1]),
+          coef(y.sujet11)[1] + qnorm(0.975) * sqrt(sujet11.var[1,1]))
+ICka <- c(coef(y.sujet11)[2] - qnorm(0.975) * sqrt(sujet11.var[2,2]),
+          coef(y.sujet11)[2] + qnorm(0.975) * sqrt(sujet11.var[2,2]))
+ICke <- c(coef(y.sujet11)[3] - qnorm(0.975) * sqrt(sujet11.var[3,3]),
+          coef(y.sujet11)[3] + qnorm(0.975) * sqrt(sujet11.var[3,3]))
+
+
+IC_V2 <- less.more(coef(y.sujet11)[1], qnorm(0.975) * sqrt(sujet11.var[1,1])) 
+ICka2 <- less.more(coef(y.sujet11)[2], qnorm(0.975) * sqrt(sujet11.var[2,2])) 
+ICke2 <- less.more(coef(y.sujet11)[3], qnorm(0.975) * sqrt(sujet11.var[3,3])) 
+```
+
+
+
+```{r p.vals}
+y.coeffs <- tibble(as.data.frame(s.y.sujet11$coef)) %>%
+  mutate(
+    `Std. Estimate` = Estimate / `Std. Error`,
+    `p(N)` = 2*(1 - pnorm(`Std. Estimate`)),
+    param = rownames(as.data.frame(s.y.sujet11$coef))
+  ) %>%
+    select(param, everything())
+
+y.coeffs
+```
+
 
 ```{r extra}
 data %>% 
