@@ -1,45 +1,23 @@
----
-title: "Estimation de modèle d'absorption-élimination à un compartiment par maximum de vraisemblance"
-author: "BOUTARD Anthony, MAGANA LOPEZ Gustavo, RONCALLI Théo"
-date: "12/02/2021"
-output:
-  html_document:
-    toc: yes
-    toc_depth: 3
-    df_print: paged
-  pdf_document:
-    toc: yes
-    toc_depth: '3'
----
-
-```{r setup, include=FALSE}
+## ----setup, include=FALSE--------------------------------------------------------------------------------------
 here::i_am("src/tp-pharmacocinetique_BOUTARD_MAGANA_RONCALLI.Rmd")
 library(here)
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-Le code peut être trouvé dans [ce repo GitHub](https://github.com/gmagannaDevelop/Vraisemblance/blob/main/src/tp-pharmacocinetique_BOUTARD_MAGANA_RONCALLI.Rmd).
-              
-### Paquêts
 
-```{r libraries, message=FALSE}
+## ----libraries, message=FALSE----------------------------------------------------------------------------------
 library(docstring)
 library(tidyverse)
-```
 
-### Lecture des données
 
-```{r lecture.donnees, message=FALSE}
+## ----lecture.donnees, message=FALSE----------------------------------------------------------------------------
 fichier <- here("data", "PK.tsv")
 data <- read_delim(fichier, delim = " ")
 sujet11 <- data %>% filter(sujet == 11) %>% select(temps, concentration, dose)
 
 head(sujet11)
-```
 
-### Définition de fonctions 
 
-```{r definition.de.fonctions}
+## ----definition.de.fonctions-----------------------------------------------------------------------------------
 fonc.regr.dose <- function(D){
   #' Fixer la dose initiale 
   #' 
@@ -102,11 +80,9 @@ less.more <-  function(a, b){
 more.less <-  function(a, b){
   c(a + b, a - b)
 }
-```
 
-### Estimation des valeurs initiales
 
-```{r adjust}
+## ----adjust----------------------------------------------------------------------------------------------------
 dose.by.subject <- data %>% group_by(sujet) %>% select(dose) %>%
   summarise( dose = unique(dose)) 
 
@@ -125,11 +101,9 @@ dydt_0 <- (sujet11$concentration[1] - 0) / (sujet11$temps[1] - 0)
 ka_i <- (dydt_0 * v_i ) / unique(sujet11$dose)
 
 theta0 <- list(V=v_i, ka=ka_i, ke=ke_i)
-```
 
-### Estimation du modèle
 
-```{r estimation.du.modele}
+## ----estimation.du.modele--------------------------------------------------------------------------------------
 y.sujet11 <- nls(
   concentration ~ f.sujet11(temps, V, ka, ke), 
   data = sujet11, start = theta0,
@@ -154,22 +128,17 @@ plt1.sj11 <- sujet11 %>%
   )
 
 print(plt1.sj11)
-```
 
 
-
-
-```{r conf.int}
+## ----conf.int--------------------------------------------------------------------------------------------------
 sujet11.var <- vcov(y.sujet11)
 
 IC_V  <- less.more(coef(y.sujet11)[[1]], qnorm(0.975) * sqrt(sujet11.var[1,1])) 
 IC_ka <- less.more(coef(y.sujet11)[[2]], qnorm(0.975) * sqrt(sujet11.var[2,2])) 
 IC_ke <- less.more(coef(y.sujet11)[[3]], qnorm(0.975) * sqrt(sujet11.var[3,3])) 
-```
 
 
-
-```{r p.vals}
+## ----p.vals----------------------------------------------------------------------------------------------------
 y.coeffs <- tibble(as.data.frame(s.y.sujet11$coef)) %>%
   mutate(
     `Std. Estimate` = Estimate / `Std. Error`,
@@ -179,12 +148,10 @@ y.coeffs <- tibble(as.data.frame(s.y.sujet11$coef)) %>%
     select(param, everything())
 
 y.coeffs
-```
 
 
-```{r extra, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+## ----extra, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE--------------------------------------------
 data %>% 
   ggplot(aes(x=temps, y=concentration)) +
     geom_point(aes(size=poids, shape=as.character(sexe), colour=dose))
-```
 
