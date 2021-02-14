@@ -15,7 +15,7 @@ pratique en R que ce répertoire peut apporter.
 
 ## Travaux
 
-1. [Prise en main (TP1)](build/TP1.html)
+1. [Étude de pharmacocinétique : estimation de modèle d'absorption-élimination à 1 compartiment par maximum de vraisemblance](build/tp-pharmacocinetique_BOUTARD_MAGANA_RONCALLI.html)
 
 ## Reproducibilité
 
