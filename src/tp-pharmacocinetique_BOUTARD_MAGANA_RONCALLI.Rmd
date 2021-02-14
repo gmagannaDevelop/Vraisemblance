@@ -1,5 +1,5 @@
 ---
-title: "Modèle non-linéaire de pharmacocinétique"
+title: "Estimation de modèle d'absorption-élimination à un compartiment par maximum de vraisemblance"
 author: "BOUTARD Anthony, MAGANA LOPEZ Gustavo, RONCALLI Théo"
 date: "12/02/2021"
 output:
@@ -75,7 +75,6 @@ $$
 
 
 ```{r adjust}
-library(latex2exp)
 f.sujet11 <- fonc.regr.dose(unique(sujet11$dose))
 
 v_i <- sujet11 %>%

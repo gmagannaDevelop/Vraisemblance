@@ -1,37 +1,39 @@
-## Welcome to GitHub Pages
+# Méthodes de Vraisemblance
 
-You can use the [editor on GitHub](https://github.com/gmagannaDevelop/Vraisemblance/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+Cours du [Master en Bio-Informatique et Biostatistiques](https://www.universite-paris-saclay.fr/formation/master/bio-informatique)
+de la Faculté des 
+Sciences de l'[Université Paris-Saclay](https://www.universite-paris-saclay.fr/). 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+* Élève : Gustavo Magaña López
 
-### Markdown
+Ce répertoire contient les documents liés aux Travaux Pratiques du 
+cours "Biostatistiques : Statistiques Multivariées". 
+Le développement initial sera fait en français, la langue d'enseignement 
+de l'UE. Je veux éventuellement tout traduire en anglais, pour permettre 
+à la communauté non-francophone de profiter de la référence
+pratique en R que ce répertoire peut apporter.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Travaux
 
-```markdown
-Syntax highlighted code block
+1. [Prise en main (TP1)](build/TP1.html)
 
-# Header 1
-## Header 2
-### Header 3
+## Reproducibilité
 
-- Bulleted
-- List
+* La plate-forme de développement pour le langage R est par excellence [RStudio](https://rstudio.com/).
+  Pour reprendre le projet avec la même configuration que j'ai utilisée pour 
+  le développer, ouvrez le fichier `.Rproj`. RStudio devra alors ouvrir une session 
+  avec les paramètres que j'ai fixés.
 
-1. Numbered
-2. List
+* Une bonne pratique en Python est l'emploi d'environnements virtuels afin
+  d'isoler les __dependencies__ d'un projet de l'installation du système. 
+  En R, ceci est possible grâce à [renv](https://rstudio.github.io/renv/).
+  Je vous invite à lire leur documentation et commencer à l'utiliser pour 
+  tous vos projets R. __Je vous conseille fortement de lire la documentation
+  de renv__. C'est le seul moyen que j'ai de vous garantir que vous pourrez
+  reproduire mes résultats. Sans ceci, la réussite de reproduction des 
+  résultats est une variable aléatoire qui suit la loi de Bernoulli avec
+  une probabilité de réussite ridiculement faible.
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/gmagannaDevelop/Vraisemblance/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+* Une fois créé l'environnement spécifié par le fichier `renv.lock`, activez-le
+  pour éditer ou exécuter n'importe quel rapport `.Rmd` ou script `.R` sans 
+  problèmes liés au paquets R.
