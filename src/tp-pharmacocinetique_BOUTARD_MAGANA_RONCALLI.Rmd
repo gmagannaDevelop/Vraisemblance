@@ -18,7 +18,7 @@ library(here)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Le code peut être trouvé dans [ce repo GitHub](https://github.com/gmagannaDevelop/Vraisemblance/blob/main/src/tp-pharmacocinetique_BOUTARD_MAGANA_RONCALLI.Rmd).
+Le code peut être trouvé dans [ce repo GitHub](https://github.com/gmagannaDevelop/Vraisemblance/blob/main/src/).
               
 ### Paquêts
 
