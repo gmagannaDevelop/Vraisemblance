@@ -75,6 +75,7 @@ $$
 
 
 ```{r adjust}
+library(latex2exp)
 f.sujet11 <- fonc.regr.dose(unique(sujet11$dose))
 
 v_i <- sujet11 %>%
@@ -106,16 +107,29 @@ t.optim <- sujet11 %>% filter(concentration == max(concentration)) %>% select(te
 #ka_i <- 11 * ke_i
 ka_i <- (7.6 * v_i ) / unique(sujet11$dose)
 
+theta0 <- list(V=v_i, ka=ka_i, ke=ke_i)
+
 y.sujet11 <- nls(
   concentration ~ f.sujet11(temps, V, ka, ke), 
-  data = sujet11, start = list(V=v_i, ka=ka_i, ke=ke_i),
+  data = sujet11, start = theta0,
   trace = TRUE, model = TRUE
 )
 
 plt1.sj11 <- sujet11 %>%
-  ggplot(mapping = aes(x = temps, y = concentration)) +
+  mutate(
+    `Concentration du médicament` = concentration,
+    Temps = temps
+  ) %>%
+  ggplot(mapping = aes(x = Temps, y = `Concentration du médicament`)) +
     geom_point() +
-      geom_function(fun = f.sujet11, args = as.list(coef(y.sujet11)))
+    geom_function(aes(colour = "nls"), 
+                  fun = f.sujet11, args = as.list(coef(y.sujet11))) +
+    geom_label(
+      x = 50, y = 10,
+      label=TeX("$\\hat{y}_{i}(t_{i} \\; | \\; \\theta^{(0)})$")) +
+    geom_function(aes(colour = "depart"), 
+                  fun = f.sujet11, args = theta0) +
+    ggtitle(label = TeX("$\\hat{y}_{i}(t_{i} \\; | \\; \\theta^{(0)})$"))
 
 print(plt1.sj11)
 ```
