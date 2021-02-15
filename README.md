@@ -7,7 +7,7 @@ Sciences de l'[Université Paris-Saclay](https://www.universite-paris-saclay.fr/
 * Élève : Gustavo Magaña López
 
 Ce répertoire contient les documents liés aux Travaux Pratiques du 
-cours "Biostatistiques : Statistiques Multivariées". 
+cours "Méthodes de Vraisemblance". 
 Le développement initial sera fait en français, la langue d'enseignement 
 de l'UE. Je veux éventuellement tout traduire en anglais, pour permettre 
 à la communauté non-francophone de profiter de la référence
